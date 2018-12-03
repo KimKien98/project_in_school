@@ -1,168 +1,168 @@
-var LocalStrategy   = require('passport-local').Strategy;
+// var LocalStrategy   = require('passport-local').Strategy;
 
-var User            = require('../app/models/home');
+// var User            = require('../app/models/user');
 
-var bcrypt = require('bcrypt-nodejs');
+// var bcrypt = require('bcrypt-nodejs');
 
-var configAuth = require('./auth.js');
-var constant = require('../config/constants');
-var dateFormat = require('dateformat');
-var fs = require('fs');
+// var configAuth = require('./auth.js');
+// var constant = require('../config/constants');
+// var dateFormat = require('dateformat');
+// var fs = require('fs');
 
-var bcrypt = require('bcrypt-nodejs');
+// var bcrypt = require('bcrypt-nodejs');
 
 
-//expose this function to our app using module.exports
-module.exports = function(passport) {
+// //expose this function to our app using module.exports
+// module.exports = function(passport) {
 
-    // =========================================================================
-    // passport session setup ==================================================
-    // =========================================================================
-    // required for persistent login sessions
-    // passport needs ability to serialize and unserialize users out of session
+//     // =========================================================================
+//     // passport session setup ==================================================
+//     // =========================================================================
+//     // required for persistent login sessions
+//     // passport needs ability to serialize and unserialize users out of session
 
-    // used to serialize the user for the session
-    passport.serializeUser(function(user, done) {
-        done(null, user);
-    });
+//     // used to serialize the user for the session
+//     passport.serializeUser(function(user, done) {
+//         done(null, user);
+//     });
 
-    // used to deserialize the user
-    passport.deserializeUser(function(id, done) {
-        User.findById(id, function(err, user) {
-            done(err, user);
-        });
-    });
+//     // used to deserialize the user
+//     passport.deserializeUser(function(id, done) {
+//         User.findById(id, function(err, user) {
+//             done(err, user);
+//         });
+//     });
 
-    // =========================================================================
-    // LOCAL SIGNUP ============================================================
-    // =========================================================================
-    // we are using named strategies since we have one for login and one for signup
-    // by default, if there was no name, it would just be called 'local'
+//     // =========================================================================
+//     // LOCAL SIGNUP ============================================================
+//     // =========================================================================
+//     // we are using named strategies since we have one for login and one for signup
+//     // by default, if there was no name, it would just be called 'local'
 
-    passport.use('local-signup', new LocalStrategy({
-        // by default, local strategy uses username and password, we will override with email
-        usernameField : 'email',
-        passwordField : 'password',
-        passReqToCallback : true // allows us to pass back the entire request to the callback
-    },
-    function(req, email, password, done) {
-        // asynchronous
-        // User.findOne wont fire unless data is sent back
-        process.nextTick(function() {
+//     passport.use('local-signup', new LocalStrategy({
+//         // by default, local strategy uses username and password, we will override with email
+//         usernameField : 'email',
+//         passwordField : 'password',
+//         passReqToCallback : true // allows us to pass back the entire request to the callback
+//     },
+//     function(req, sodienthoai, matkhau, done) {
+//         // asynchronous
+//         // User.findOne wont fire unless data is sent back
+//         process.nextTick(function() {
 
-        // find a user whose email is the same as the forms email
-        // we are checking to see if the user trying to login already exists
-        User.findOne({ 'mail' :  email }, function(err, user) {
-            // if there are any errors, return the error
-            if (err)
-                return done(err);
+//         // find a user whose email is the same as the forms email
+//         // we are checking to see if the user trying to login already exists
+//         User.findOne({ 'sodienthoai' :  sodienthoai }, function(err, user) {
+//             // if there are any errors, return the error
+//             if (err)
+//                 return done(err);
 
-            // check to see if theres already a user with that email
-            if (user) {
-                return done(null, false, req.flash('error', 'That email is already taken.'));
-            } else {
+//             // check to see if theres already a user with that email
+//             if (user) {
+//                 return done(null, false, req.flash('error', 'That phonenumber is already taken.'));
+//             } else {
             	
             	
-           User.find().sort([['_id', 'descending']]).limit(1).exec(function(err, userdata) {	
+//            User.find().sort([['_id', 'descending']]).limit(1).exec(function(err, userdata) {	
 
         	   
-                // if there is no user with that email
-                // create the user
-                var newUser            = new User();
+//                 // if there is no user with that email
+//                 // create the user
+//                 var newUser            = new User();
 
-                // set the user's local credentials
+//                 // set the user's local credentials
                 
-           	  var day =dateFormat(Date.now(), "yyyy-mm-dd HH:MM:ss");
+//            	  //var day =dateFormat(Date.now(), "yyyy-mm-dd HH:MM:ss");
            	 
-           	  var active_code=bcrypt.hashSync(Math.floor((Math.random() * 99999999) *54), null, null);
+//            	  var active_code=bcrypt.hashSync(Math.floor((Math.random() * 99999999) *54), null, null);
            	 
                
-                    newUser.mail    = email;
-                    newUser.password = newUser.generateHash(password);
-                    newUser.name = req.body.username;
-                    newUser.created_date = day;
-                    newUser.updated_date = day;
-                    newUser.status = 'active'; //inactive for email actiavators
-                    newUser.active_hash = active_code;
-                    newUser._id = userdata[0]._id+1;
+//                     newUser.sodienthoai    = sodienthoai;
+//                     newUser.matkhau = newUser.generateHash(matkhau);
+//                     newUser.hoten = req.body.hoten;
+//                    // newUser.created_date = day;
+//                    // newUser.updated_date = day;
+//                     newUser.status = 'active'; //inactive for email actiavators
+//                     newUser.active_hash = active_code;
+//                     newUser._id = userdata[0]._id+1;
 
 
-                // save the user
-                newUser.save(function(err) {
-                    if (err)
-                        throw err;
+//                 // save the user
+//                 newUser.save(function(err) {
+//                     if (err)
+//                         throw err;
 
-                  /*  var email            = require('../lib/email.js');
-                    email.activate_email(req.body.username,req.body.email,active_code);
-                                        return done(null, newUser,req.flash('success', 'Account Created Successfully,Please Check Your Email For Account Confirmation.'));
-                    */
-                    return done(null, newUser,req.flash('success', 'Account Created Successfully'));
+//                   /*  var email            = require('../lib/email.js');
+//                     email.activate_email(req.body.username,req.body.email,active_code);
+//                                         return done(null, newUser,req.flash('success', 'Account Created Successfully,Please Check Your Email For Account Confirmation.'));
+//                     */
+//                     return done(null, newUser,req.flash('success', 'Account Created Successfully'));
                     
-                    req.session.destroy();
+//                     req.session.destroy();
                 
-                });
+//                 });
                 
-              });
+//               });
            
                 
-            }
+//             }
 
-        });    
+//         });    
 
-        });
+//         });
 
         
-    }));
+//     }));
     
     
-    // =========================================================================
-    // LOCAL LOGIN =============================================================
-    // =========================================================================
-    // we are using named strategies since we have one for login and one for signup
-    // by default, if there was no name, it would just be called 'local'
+//     // =========================================================================
+//     // LOCAL LOGIN =============================================================
+//     // =========================================================================
+//     // we are using named strategies since we have one for login and one for signup
+//     // by default, if there was no name, it would just be called 'local'
     
-    passport.use('local-login', new LocalStrategy({
-        // by default, local strategy uses username and password, we will override with email
-        usernameField : 'email',
-        passwordField : 'password',
-        passReqToCallback : true // allows us to pass back the entire request to the callback
-    },
-    function(req, email, password, done) { // callback with email and password from our form
+//     passport.use('local-login', new LocalStrategy({
+//         // by default, local strategy uses username and password, we will override with email
+//         usernameField : 'email',
+//         passwordField : 'password',
+//         passReqToCallback : true // allows us to pass back the entire request to the callback
+//     },
+//     function(req, email, password, done) { // callback with email and password from our form
 
     	
     	
-        // find a user whose email is the same as the forms email
-        // we are checking to see if the user trying to login already exists
-        User.findOne({ 'mail' :  email }, function(err, user) {
-            // if there are any errors, return the error before anything else
+//         // find a user whose email is the same as the forms email
+//         // we are checking to see if the user trying to login already exists
+//         User.findOne({ 'mail' :  email }, function(err, user) {
+//             // if there are any errors, return the error before anything else
             
-            if (err)
-            return done(null, false, req.flash('error', err)); // req.flash is the way to set flashdata using connect-flash
+//             if (err)
+//             return done(null, false, req.flash('error', err)); // req.flash is the way to set flashdata using connect-flash
 
 
-            // if no user is found, return the message
-            if (!user)
-                return done(null, false, req.flash('error', 'Sorry Your Account Not Exits ,Please Create Account.')); // req.flash is the way to set flashdata using connect-flash
+//             // if no user is found, return the message
+//             if (!user)
+//                 return done(null, false, req.flash('error', 'Sorry Your Account Not Exits ,Please Create Account.')); // req.flash is the way to set flashdata using connect-flash
 
             
             
-            // if the user is found but the password is wrong
-            if (!user.validPassword(password))
-                return done(null, false, req.flash('error', 'Email and Password Does Not Match.')); // create the loginMessage and save it to session as flashdata
+//             // if the user is found but the password is wrong
+//             if (!user.validPassword(password))
+//                 return done(null, false, req.flash('error', 'Email and Password Does Not Match.')); // create the loginMessage and save it to session as flashdata
 
-            if(user.status === 'inactive')
-             return done(null, false, req.flash('error', 'Your Account Not Activated ,Please Check Your Email')); // create the loginMessage and save it to session as flashdata
+//             if(user.status === 'inactive')
+//              return done(null, false, req.flash('error', 'Your Account Not Activated ,Please Check Your Email')); // create the loginMessage and save it to session as flashdata
             
             
-            // all is well, return successful user
-            req.session.user = user;
+//             // all is well, return successful user
+//             req.session.user = user;
 		
-            return done(null, user);
-        });
+//             return done(null, user);
+//         });
 
-    }));
+//     }));
 
-};
+// };
 
     
     
